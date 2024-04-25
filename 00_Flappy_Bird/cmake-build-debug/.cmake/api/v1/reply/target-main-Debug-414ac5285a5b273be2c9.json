@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "00_Flappy_Bird"
+			"path" : "main"
 		}
 	],
 	"backtrace" : 1,
@@ -53,7 +53,7 @@
 			]
 		}
 	],
-	"id" : "00_Flappy_Bird::@6890427a1f51a3e7e1df",
+	"id" : "main::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -69,8 +69,8 @@
 		],
 		"language" : "CXX"
 	},
-	"name" : "00_Flappy_Bird",
-	"nameOnDisk" : "00_Flappy_Bird",
+	"name" : "main",
+	"nameOnDisk" : "main",
 	"paths" : 
 	{
 		"build" : ".",
