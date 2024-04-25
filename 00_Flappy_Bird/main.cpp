@@ -19,6 +19,15 @@ private:
     float birdAcceleration;
     int score;
     bool gameover;
+    bool pressed;
+
+    sf::Text scoreText;
+
+    const float PIPE_WIDTH = 50.0f;
+    const float MIN_PIPE_HEIGHT = 50.0f;
+    const float MAX_PIPE_HEIGHT = 300.0f;
+    const float PIPE_GAP = 200.0f;
+    const float PIPE_X_POSITION = 800.0f;
 
     vector<sf::RectangleShape> pipes;
     float pipeSpawnTimer;
@@ -26,21 +35,25 @@ private:
     void processEvents();
     void update(float deltaTime);
     void render();
-    void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
+    void handlePlayerInput(sf::Keyboard::Key key);
     void spawnPipe();
     void movePipes(float deltaTime);
     void checkCollision();
     void checkScore();
 };
 
-FlappyBird::FlappyBird() : window(sf::VideoMode(800, 600), "Flappy Bird"), bird(20.0f) {
+FlappyBird::FlappyBird() : pressed(false), window(sf::VideoMode(800, 600), "Flappy Bird"), bird(20.0f) {
     bird.setFillColor(sf::Color::Green);
     bird.setPosition(100.0f, 300.0f);
     birdVelocity = 0.0f;
-    birdAcceleration = 0.0f;
     gravity = 100.0f;
+    birdAcceleration = gravity;
     score = 0;
     gameover = false;
+
+    scoreText.setCharacterSize(24); // Set the character size
+    scoreText.setFillColor(sf::Color::White); // Set the text color
+    scoreText.setPosition(700, 50); // Position the score in the top right corner
 }
 
 void FlappyBird::run() {
@@ -59,11 +72,11 @@ void FlappyBird::processEvents() {
         if (event.type == sf::Event::Closed) {
             window.close();
         }
-        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
-            handlePlayerInput(event.key.code, true);
+        if (event.key.code == sf::Keyboard::Space && event.type == sf::Event::KeyPressed && !pressed) {
+            handlePlayerInput(event.key.code);
         }
-        if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
-            handlePlayerInput(event.key.code, false);
+        if (event.key.code == sf::Keyboard::Space && event.type == sf::Event::KeyReleased && pressed) {
+            handlePlayerInput(event.key.code);
         }
     }
 }
@@ -79,14 +92,17 @@ void FlappyBird::update(float deltaTime) {
         }
         movePipes(deltaTime);
         checkCollision();
+        checkScore();
     }
 }
 
-void FlappyBird::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
-    if (key == sf::Keyboard::Space) {
-        if (isPressed) {
-            birdAcceleration = -gravity;
-        }
+void FlappyBird::handlePlayerInput(sf::Keyboard::Key key) {
+    if (key == sf::Keyboard::Space && !pressed) {
+        birdVelocity = -gravity * 0.5f;
+        pressed = true;
+    }
+    else {
+        pressed = false;
     }
 }
 
@@ -100,11 +116,18 @@ void FlappyBird::render() {
 }
 
 void FlappyBird::spawnPipe() {
-    sf::RectangleShape pipe;
-    pipe.setSize(sf::Vector2f(50.0f, 300.0f));
-    pipe.setFillColor(sf::Color::Red);
-    pipe.setPosition(800.0f, 0.0f);
-    pipes.push_back(pipe);
+    float randomHeight1 = MIN_PIPE_HEIGHT + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (MAX_PIPE_HEIGHT - MIN_PIPE_HEIGHT)));
+    float randomHeight2 = 600.0f - randomHeight1 - PIPE_GAP;
+
+    sf::RectangleShape pipe1(sf::Vector2f(PIPE_WIDTH, randomHeight1));
+    pipe1.setFillColor(sf::Color::Red);
+    pipe1.setPosition(PIPE_X_POSITION, 0.0f);
+    pipes.push_back(pipe1);
+
+    sf::RectangleShape pipe2(sf::Vector2f(PIPE_WIDTH, randomHeight2));
+    pipe2.setFillColor(sf::Color::Blue);
+    pipe2.setPosition(PIPE_X_POSITION, randomHeight1 + PIPE_GAP);
+    pipes.push_back(pipe2);
 }
 
 void FlappyBird::movePipes(float deltaTime) {
@@ -126,6 +149,7 @@ void FlappyBird::checkScore() {
         if (bird.getPosition().x > pipe.getPosition().x && pipe.getFillColor() != sf::Color::Green) {
             score++;
             pipe.setFillColor(sf::Color::Green);
+            scoreText.setString("Score: " + to_string(score));
         }
     }
 }
