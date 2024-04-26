@@ -36,12 +36,15 @@ private:
 
     sf::Font font;
     sf::Text scoreText;
+    sf::Text targetTimeText;
 
     const float PIPE_WIDTH = 50.0f;
     const float MIN_PIPE_HEIGHT = 50.0f;
     const float MAX_PIPE_HEIGHT = 300.0f;
     const float PIPE_GAP = 250.0f;
     const float PIPE_X_POSITION = 800.0f;
+
+    int target_time = 20;
 
     vector<sf::RectangleShape> pipes;
     float pipeSpawnTimer;
@@ -62,17 +65,18 @@ FlappyBird::FlappyBird() : pressed(false), window(sf::VideoMode(800, 600), "Flap
     birdVelocity = 0.0f;
     gravity = 100.0f;
     birdAcceleration = gravity;
-    score = 0;
+    score = 20;
     gameover = false;
     if (!font.loadFromFile("../fonts/Inter-Bold.ttf")){
         cout << "Error loading font" << endl;
         printCurrentWorkingDirectory();
     }
     scoreText.setFont(font);
+
     scoreText.setCharacterSize(30); // Set the character size
     scoreText.setFillColor(sf::Color::White); // Set the text color
     scoreText.setPosition(10, 10); // Position the score in the top right corner
-    scoreText.setString("Score: " + to_string(score));
+    scoreText.setString("Target Score: " + to_string(score));
 }
 
 void FlappyBird::run() {
@@ -129,9 +133,11 @@ void FlappyBird::render() {
     window.clear();
     window.draw(bird);
     window.draw(scoreText);
+    window.draw(targetTimeText);
     for (auto &pipe : pipes) {
         window.draw(pipe);
         window.draw(scoreText);
+        window.draw(targetTimeText);
     }
     window.display();
 }
@@ -168,9 +174,9 @@ void FlappyBird::checkCollision() {
 void FlappyBird::checkScore() {
     for (auto &pipe : pipes) {
         if (bird.getPosition().x > pipe.getPosition().x && pipe.getFillColor() != sf::Color::Green) {
-            score++;
+            score--;
             pipe.setFillColor(sf::Color::Green);
-            scoreText.setString("Score: " + to_string(score));
+            scoreText.setString("Target Score: " + to_string(score));
         }
     }
 }
