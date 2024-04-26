@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <cstdlib>
 #include "vector"
+
 using namespace std;
 // Flappy Bird game
 class FlappyBird {
@@ -21,12 +22,13 @@ private:
     bool gameover;
     bool pressed;
 
+    sf::Font font;
     sf::Text scoreText;
 
     const float PIPE_WIDTH = 50.0f;
     const float MIN_PIPE_HEIGHT = 50.0f;
     const float MAX_PIPE_HEIGHT = 300.0f;
-    const float PIPE_GAP = 200.0f;
+    const float PIPE_GAP = 250.0f;
     const float PIPE_X_POSITION = 800.0f;
 
     vector<sf::RectangleShape> pipes;
@@ -50,10 +52,14 @@ FlappyBird::FlappyBird() : pressed(false), window(sf::VideoMode(800, 600), "Flap
     birdAcceleration = gravity;
     score = 0;
     gameover = false;
-
+    // check if can find the file
+    if (!font.loadFromFile("Inter-Black.ttf")){
+        cout << "Error loading font" << endl;
+    }
+//
     scoreText.setCharacterSize(24); // Set the character size
-    scoreText.setFillColor(sf::Color::White); // Set the text color
-    scoreText.setPosition(700, 50); // Position the score in the top right corner
+    scoreText.setFillColor(sf::Color::Red); // Set the text color
+    scoreText.setPosition(400, 50); // Position the score in the top right corner
 }
 
 void FlappyBird::run() {
