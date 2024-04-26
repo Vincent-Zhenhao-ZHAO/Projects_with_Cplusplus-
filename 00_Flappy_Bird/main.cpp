@@ -52,6 +52,9 @@ private:
     sf::RectangleShape endGameBackground;
     sf::RectangleShape successBackground;
 
+    sf::RectangleShape restartButton;
+    sf::Text restartButtonText;
+
     void processEvents();
     void update(float deltaTime);
     void render();
@@ -59,7 +62,9 @@ private:
     void spawnPipe();
     void movePipes(float deltaTime);
     void checkCollision();
+    void checkBirdPosition();
     void checkScore();
+    void restartGame();
 };
 
 FlappyBird::FlappyBird() : pressed(false), window(sf::VideoMode(800, 600), "Flappy Bird"), bird(20.0f) {
@@ -90,18 +95,32 @@ FlappyBird::FlappyBird() : pressed(false), window(sf::VideoMode(800, 600), "Flap
     endGameText.setCharacterSize(30);
     endGameText.setFillColor(sf::Color::White);
     endGameText.setString("Game Over!");
-    endGameText.setPosition(250, 250); // Positioned over the background
+    endGameText.setPosition(300, 300); // Positioned over the background
 
     // Initialise success pop-up
     successBackground.setSize(sf::Vector2f(400, 200));
     successBackground.setPosition(200, 200); // Centered in window
-    successBackground.setFillColor(sf::Color(0, 255, 0, 150)); // Semi-transparent green
+    successBackground.setFillColor(sf::Color(0, 0, 0, 150)); // Semi-transparent green
 
     successText.setFont(font);
     successText.setCharacterSize(30);
-    successText.setFillColor(sf::Color::White);
+    successText.setFillColor(sf::Color::Green);
     successText.setString("Success!");
-    successText.setPosition(250, 250); // Positioned over the background
+    successText.setPosition(350, 300); // Positioned over the background
+
+    restartButton.setSize(sf::Vector2f(200, 50));
+    restartButton.setPosition(300, 400); // You can adjust this position as needed
+    restartButton.setFillColor(sf::Color::White);
+
+    restartButtonText.setFont(font);
+    restartButtonText.setCharacterSize(20);
+    restartButtonText.setFillColor(sf::Color::Black);
+    restartButtonText.setString("Restart");
+    // Center text on button
+    sf::FloatRect textRect = restartButtonText.getLocalBounds();
+    restartButtonText.setOrigin(textRect.left + textRect.width / 2.0f,
+                                textRect.top + textRect.height / 2.0f);
+    restartButtonText.setPosition(restartButton.getPosition() + sf::Vector2f(restartButton.getSize() / 2.0f));
 }
 
 void FlappyBird::run() {
@@ -112,6 +131,19 @@ void FlappyBird::run() {
         update(deltaTime);
         render();
     }
+}
+
+void FlappyBird::restartGame() {
+    // Reset game state
+    bird.setPosition(100.0f, 300.0f);
+    birdVelocity = 0.0f;
+    score = 20;
+    gameover = false;
+    pipes.clear();
+    pipeSpawnTimer = 0.0f;
+
+    // Reset score text
+    scoreText.setString("Target Score: " + to_string(score));
 }
 
 void FlappyBird::processEvents() {
@@ -125,6 +157,12 @@ void FlappyBird::processEvents() {
         }
         if (event.key.code == sf::Keyboard::Space && event.type == sf::Event::KeyReleased && pressed) {
             handlePlayerInput(event.key.code);
+        }
+        if (event.type == sf::Event::MouseButtonPressed) {
+            sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+            if (restartButton.getGlobalBounds().contains(mousePos)) {
+                restartGame();
+            }
         }
     }
 }
@@ -140,6 +178,7 @@ void FlappyBird::update(float deltaTime) {
         }
         movePipes(deltaTime);
         checkCollision();
+        checkBirdPosition();
         checkScore();
     }
 }
@@ -167,11 +206,15 @@ void FlappyBird::render() {
     if (gameover && score > 0) {
         window.draw(endGameBackground);
         window.draw(endGameText);
+        window.draw(restartButton);
+        window.draw(restartButtonText);
     }
     if (score <= 0) {
         window.draw(successBackground);
         window.draw(successText);
         gameover = true;
+        window.draw(restartButton);
+        window.draw(restartButtonText);
     }
     window.display();
 }
@@ -202,6 +245,12 @@ void FlappyBird::checkCollision() {
         if (bird.getGlobalBounds().intersects(pipe.getGlobalBounds())) {
             gameover = true;
         }
+    }
+}
+
+void FlappyBird::checkBirdPosition() {
+    if (bird.getPosition().y < 0 || bird.getPosition().y > 600) {
+        gameover = true;
     }
 }
 
