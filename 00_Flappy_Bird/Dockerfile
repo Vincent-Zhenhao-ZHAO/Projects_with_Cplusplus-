@@ -13,6 +13,7 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY CMakeLists.txt /app/
 COPY main.cpp /app/
+COPY fonts /app/
 
 # Run cmake
 RUN cmake -S . -B build
