@@ -4,7 +4,8 @@
 #include <cstdlib>
 #include "vector"
 using namespace std;
-// yes, I know using namespace std is bad practice, but this is a simple game and I'm lazy
+// yes, I know using namespace std is bad practice, but this is a simple game and I'm lazy,
+// and lazy people don't care about best practices
 class FlappyBird {
 public:
     FlappyBird();
