@@ -5,7 +5,7 @@ project(FlappyBird)
 set(CMAKE_CXX_STANDARD 11)
 
 # Find SFML components
-find_package(SFML 2.6 COMPONENTS graphics audio REQUIRED)
+find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 
 # Add executable
 add_executable(main main.cpp)
