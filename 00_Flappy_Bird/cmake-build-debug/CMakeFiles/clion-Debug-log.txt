@@ -10,5 +10,5 @@ CMake Deprecation Warning:
 
 -- Found SFML 2.6.1 in /opt/homebrew/lib/cmake/SFML
 -- Configuring done (0.0s)
--- Generating done (0.5s)
+-- Generating done (0.7s)
 -- Build files have been written to: /Users/vincentzhao/Desktop/Projects_with_Cplusplus_/00_Flappy_Bird/cmake-build-debug
