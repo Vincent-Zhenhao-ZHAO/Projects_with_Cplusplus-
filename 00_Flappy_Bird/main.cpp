@@ -44,10 +44,13 @@ private:
     const float PIPE_GAP = 250.0f;
     const float PIPE_X_POSITION = 800.0f;
 
-    int target_time = 20;
-
     vector<sf::RectangleShape> pipes;
     float pipeSpawnTimer;
+
+    sf::Text endGameText;
+    sf::Text successText;
+    sf::RectangleShape endGameBackground;
+    sf::RectangleShape successBackground;
 
     void processEvents();
     void update(float deltaTime);
@@ -67,6 +70,7 @@ FlappyBird::FlappyBird() : pressed(false), window(sf::VideoMode(800, 600), "Flap
     birdAcceleration = gravity;
     score = 20;
     gameover = false;
+
     if (!font.loadFromFile("../fonts/Inter-Bold.ttf")){
         cout << "Error loading font" << endl;
         printCurrentWorkingDirectory();
@@ -77,6 +81,27 @@ FlappyBird::FlappyBird() : pressed(false), window(sf::VideoMode(800, 600), "Flap
     scoreText.setFillColor(sf::Color::White); // Set the text color
     scoreText.setPosition(10, 10); // Position the score in the top right corner
     scoreText.setString("Target Score: " + to_string(score));
+
+    endGameBackground.setSize(sf::Vector2f(400, 200));
+    endGameBackground.setPosition(200, 200); // Centered in window
+    endGameBackground.setFillColor(sf::Color(0, 0, 0, 150)); // Semi-transparent
+
+    endGameText.setFont(font);
+    endGameText.setCharacterSize(30);
+    endGameText.setFillColor(sf::Color::White);
+    endGameText.setString("Game Over!");
+    endGameText.setPosition(250, 250); // Positioned over the background
+
+    // Initialise success pop-up
+    successBackground.setSize(sf::Vector2f(400, 200));
+    successBackground.setPosition(200, 200); // Centered in window
+    successBackground.setFillColor(sf::Color(0, 255, 0, 150)); // Semi-transparent green
+
+    successText.setFont(font);
+    successText.setCharacterSize(30);
+    successText.setFillColor(sf::Color::White);
+    successText.setString("Success!");
+    successText.setPosition(250, 250); // Positioned over the background
 }
 
 void FlappyBird::run() {
@@ -138,6 +163,15 @@ void FlappyBird::render() {
         window.draw(pipe);
         window.draw(scoreText);
         window.draw(targetTimeText);
+    }
+    if (gameover && score > 0) {
+        window.draw(endGameBackground);
+        window.draw(endGameText);
+    }
+    if (score <= 0) {
+        window.draw(successBackground);
+        window.draw(successText);
+        gameover = true;
     }
     window.display();
 }
