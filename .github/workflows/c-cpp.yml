@@ -25,3 +25,10 @@ jobs:
 
       - name: Build
         run: cd ./00_Flappy_Bird && cmake --build build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: cd ./00_Flappy_Bird && docker build . -t flappy_bird

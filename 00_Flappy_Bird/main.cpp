@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include "vector"
 using namespace std;
-
+// Flappy Bird game
 class FlappyBird {
 public:
     FlappyBird();
