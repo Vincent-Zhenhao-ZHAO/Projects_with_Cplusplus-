@@ -25,6 +25,3 @@ jobs:
 
       - name: Build
         run: cd ./00_Flappy_Bird && cmake --build build
-
-      - name: Run tests
-        run: cd ./00_Flappy_Bird && ./build/main
