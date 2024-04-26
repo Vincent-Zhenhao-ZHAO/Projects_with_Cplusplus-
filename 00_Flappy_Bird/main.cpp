@@ -4,6 +4,18 @@
 #include <cstdlib>
 #include "vector"
 
+#include <unistd.h>
+#include <limits.h>
+
+void printCurrentWorkingDirectory() {
+    char buffer[PATH_MAX];
+    if (getcwd(buffer, sizeof(buffer)) != NULL) {
+        std::cout << "Current Working Directory: " << buffer << std::endl;
+    } else {
+        perror("getcwd() error");
+    }
+}
+
 using namespace std;
 // Flappy Bird game
 class FlappyBird {
@@ -52,14 +64,15 @@ FlappyBird::FlappyBird() : pressed(false), window(sf::VideoMode(800, 600), "Flap
     birdAcceleration = gravity;
     score = 0;
     gameover = false;
-    // check if can find the file
-    if (!font.loadFromFile("Inter-Black.ttf")){
+    if (!font.loadFromFile("../fonts/Inter-Bold.ttf")){
         cout << "Error loading font" << endl;
+        printCurrentWorkingDirectory();
     }
-//
-    scoreText.setCharacterSize(24); // Set the character size
-    scoreText.setFillColor(sf::Color::Red); // Set the text color
-    scoreText.setPosition(400, 50); // Position the score in the top right corner
+    scoreText.setFont(font);
+    scoreText.setCharacterSize(30); // Set the character size
+    scoreText.setFillColor(sf::Color::White); // Set the text color
+    scoreText.setPosition(10, 10); // Position the score in the top right corner
+    scoreText.setString("Score: " + to_string(score));
 }
 
 void FlappyBird::run() {
@@ -115,8 +128,10 @@ void FlappyBird::handlePlayerInput(sf::Keyboard::Key key) {
 void FlappyBird::render() {
     window.clear();
     window.draw(bird);
+    window.draw(scoreText);
     for (auto &pipe : pipes) {
         window.draw(pipe);
+        window.draw(scoreText);
     }
     window.display();
 }
